@@ -39,7 +39,7 @@ function jdnToEthiopian(jdn) {
   const n = r % 365 + 365 * Math.floor(r / 1460);
   
   const year = 4 * Math.floor((jdn - ethiopianEpoch) / 1461) + 
-               Math.floor(r / 365) - Math.floor(r / 1460);
+               Math.floor(r / 365) - Math.floor(r / 1460) + 1;
   
   const month = Math.floor(n / 30) + 1;
   const day = (n % 30) + 1;

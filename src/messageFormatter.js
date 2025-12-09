@@ -1,5 +1,15 @@
 import { formatEthiopianDate, getEthiopianMonthName } from './ethiopianCalendar.js';
 
+function escapeMarkdown(text) {
+  if (!text) return '';
+  return text
+    .replace(/_/g, '\\_')
+    .replace(/\*/g, '\\*')
+    .replace(/\[/g, '\\[')
+    .replace(/\]/g, '\\]')
+    .replace(/`/g, '\\`');
+}
+
 function formatGitsaweMessage(gitsawe, ethDate) {
   if (!gitsawe) return null;
   
@@ -8,19 +18,19 @@ function formatGitsaweMessage(gitsawe, ethDate) {
   message += `━━━━━━━━━━━━━━━━━━━━\n\n`;
   
   if (gitsawe.title) {
-    message += `*${gitsawe.title}*\n\n`;
+    message += `*${escapeMarkdown(gitsawe.title)}*\n\n`;
   }
   
   if (gitsawe.content && Array.isArray(gitsawe.content)) {
     for (const section of gitsawe.content) {
       if (section.title) {
-        message += `📌 *${section.title}*\n`;
+        message += `📌 *${escapeMarkdown(section.title)}*\n`;
       }
       if (section.main) {
         const truncatedMain = section.main.length > 800 
           ? section.main.substring(0, 800) + '...' 
           : section.main;
-        message += `${truncatedMain}\n\n`;
+        message += `${escapeMarkdown(truncatedMain)}\n\n`;
       }
     }
   }
@@ -36,19 +46,19 @@ function formatSinksarMessage(sinksar, ethDate) {
   message += `━━━━━━━━━━━━━━━━━━━━\n\n`;
   
   if (sinksar.title) {
-    message += `*${sinksar.title}*\n\n`;
+    message += `*${escapeMarkdown(sinksar.title)}*\n\n`;
   }
   
   if (sinksar.content && Array.isArray(sinksar.content)) {
     for (const section of sinksar.content) {
       if (section.title) {
-        message += `✝️ *${section.title}*\n`;
+        message += `✝️ *${escapeMarkdown(section.title)}*\n`;
       }
       if (section.main) {
         const truncatedMain = section.main.length > 800 
           ? section.main.substring(0, 800) + '...' 
           : section.main;
-        message += `${truncatedMain}\n\n`;
+        message += `${escapeMarkdown(truncatedMain)}\n\n`;
       }
     }
   }
