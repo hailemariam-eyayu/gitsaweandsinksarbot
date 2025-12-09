@@ -1,0 +1,23 @@
+{
+  "name": "ethiopian-orthodox-telegram-bot",
+  "version": "1.0.0",
+  "description": "Telegram bot for daily Ethiopian Orthodox Church readings",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js"
+  },
+  "keywords": [
+    "telegram",
+    "bot",
+    "ethiopian",
+    "orthodox",
+    "church"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "node-cron": "^4.2.1",
+    "node-telegram-bot-api": "^0.66.0"
+  }
+}
