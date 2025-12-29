@@ -32,11 +32,27 @@ const bot = new TelegramBot(BOT_TOKEN, { polling: true });
 
 loadData();
 
-async function sendDailyReadings(chatId) {
+async function sendDailyReadings(chatId, dateType = 'today') {
   try {
-    const ethDate = getTodayEthiopian();
+    let ethDate;
+    let dateLabel;
+    
+    switch (dateType) {
+      case 'yesterday':
+        ethDate = getYesterdayEthiopian();
+        dateLabel = 'የትናንት';
+        break;
+      case 'tomorrow':
+        ethDate = getTomorrowEthiopian();
+        dateLabel = 'የነገ';
+        break;
+      default:
+        ethDate = getTodayEthiopian();
+        dateLabel = 'የዛሬ';
+    }
+    
     const readings = getDailyReadings(ethDate.month, ethDate.day);
-    const message = formatDailyMessage(readings, ethDate);
+    const message = formatDailyMessage(readings, ethDate, dateLabel);
     
     const maxLength = 4000;
     if (message.length > maxLength) {
@@ -50,7 +66,7 @@ async function sendDailyReadings(chatId) {
     }
     return true;
   } catch (error) {
-    console.error(`Error sending to ${chatId}:`, error.message);
+    console.error(`Error sending ${dateType} readings to ${chatId}:`, error.message);
     return false;
   }
 }
@@ -118,6 +134,14 @@ bot.onText(/\/help/, async (msg) => {
 
 bot.onText(/\/today/, async (msg) => {
   await sendDailyReadings(msg.chat.id);
+});
+
+bot.onText(/\/yesterday/, async (msg) => {
+  await sendDailyReadings(msg.chat.id, 'yesterday');
+});
+
+bot.onText(/\/tomorrow/, async (msg) => {
+  await sendDailyReadings(msg.chat.id, 'tomorrow');
 });
 
 bot.onText(/\/subscribe/, async (msg) => {

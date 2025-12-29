@@ -85,6 +85,18 @@ function getTodayEthiopian() {
   return gregorianToEthiopian(now.getFullYear(), now.getMonth() + 1, now.getDate());
 }
 
+function getYesterdayEthiopian() {
+  const yesterday = new Date();
+  yesterday.setDate(yesterday.getDate() - 1);
+  return gregorianToEthiopian(yesterday.getFullYear(), yesterday.getMonth() + 1, yesterday.getDate());
+}
+
+function getTomorrowEthiopian() {
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  return gregorianToEthiopian(tomorrow.getFullYear(), tomorrow.getMonth() + 1, tomorrow.getDate());
+}
+
 function formatEthiopianDate(ethDate) {
   const monthName = getEthiopianMonthName(ethDate.month, true);
   return `${monthName} ${ethDate.day}፣ ${ethDate.year} ዓ.ም.`;

@@ -66,11 +66,11 @@ function formatSinksarMessage(sinksar, ethDate) {
   return message;
 }
 
-function formatDailyMessage(readings, ethDate) {
+function formatDailyMessage(readings, ethDate, dateLabel = 'የዛሬ') {
   const gregorianDate = new Date();
   const gregorianFormatted = gregorianDate.toLocaleDateString('en-GB');
   
-  let header = `🙏 *የዕለቱ መንፈሳዊ ንባብ*\n`;
+  let header = `🙏 *${dateLabel} መንፈሳዊ ንባብ*\n`;
   header += `📅 ግሪጎሪያን: ${gregorianFormatted}\n`;
   header += `📅 ኢትዮጵያ: ${formatEthiopianDate(ethDate)}\n`;
   header += `════════════════════════\n\n`;
@@ -100,6 +100,8 @@ function formatWelcomeMessage() {
 *ትዕዛዞች:*
 /start - ለመመዝገብ
 /today - የዛሬ ንባብ
+/yesterday - የትናንት ንባብ
+/tomorrow - የነገ ንባብ
 /subscribe - ለዕለታዊ ንባብ ለመመዝገብ
 /unsubscribe - ምዝገባን ለመሰረዝ
 /help - እርዳታ
@@ -119,6 +121,8 @@ function formatHelpMessage() {
 *ትዕዛዞች:*
 /start - ለመመዝገብ
 /today - የዛሬ ንባብ ለማግኘት
+/yesterday - የትናንት ንባብ ለማግኘት
+/tomorrow - የነገ ንባብ ለማግኘት
 /subscribe - ለዕለታዊ ንባብ ለመመዝገብ
 /unsubscribe - ምዝገባን ለመሰረዝ
 /status - የምዝገባ ሁኔታ

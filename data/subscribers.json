@@ -3,7 +3,7 @@
     "111111111": {
       "chatId": "111111111",
       "subscribed": true,
-      "subscribedAt": "2025-12-29T13:35:41.253Z",
+      "subscribedAt": "2025-12-29T13:37:53.238Z",
       "firstName": "Test User 1",
       "username": "testuser1"
     },
@@ -17,10 +17,10 @@
     "222222222": {
       "chatId": "222222222",
       "subscribed": false,
-      "subscribedAt": "2025-12-29T13:35:41.254Z",
+      "subscribedAt": "2025-12-29T13:37:53.241Z",
       "firstName": "Test User 2",
       "username": "testuser2",
-      "unsubscribedAt": "2025-12-29T13:35:41.255Z"
+      "unsubscribedAt": "2025-12-29T13:37:53.243Z"
     },
     "333333333": {
       "chatId": "333333333",
