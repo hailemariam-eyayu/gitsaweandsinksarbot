@@ -1,0 +1,49 @@
+{
+  "users": {
+    "111111111": {
+      "chatId": "111111111",
+      "subscribed": true,
+      "subscribedAt": "2025-12-29T13:35:41.253Z",
+      "firstName": "Test User 1",
+      "username": "testuser1"
+    },
+    "123456789": {
+      "chatId": "123456789",
+      "subscribed": true,
+      "subscribedAt": "2025-12-29T13:34:49.965Z",
+      "firstName": "Test User 1",
+      "username": "testuser1"
+    },
+    "222222222": {
+      "chatId": "222222222",
+      "subscribed": false,
+      "subscribedAt": "2025-12-29T13:35:41.254Z",
+      "firstName": "Test User 2",
+      "username": "testuser2",
+      "unsubscribedAt": "2025-12-29T13:35:41.255Z"
+    },
+    "333333333": {
+      "chatId": "333333333",
+      "subscribed": true,
+      "subscribedAt": "2025-12-29T13:35:41.253Z",
+      "firstName": "Test User 3",
+      "username": "testuser3"
+    },
+    "555666777": {
+      "chatId": "555666777",
+      "subscribed": true,
+      "subscribedAt": "2025-12-29T13:34:49.964Z",
+      "firstName": "Test User 3",
+      "username": "testuser3"
+    },
+    "987654321": {
+      "chatId": "987654321",
+      "subscribed": false,
+      "subscribedAt": "2025-12-29T13:34:49.965Z",
+      "firstName": "Test User 2",
+      "username": "testuser2",
+      "unsubscribedAt": "2025-12-29T13:34:50.021Z"
+    }
+  },
+  "channels": []
+}
