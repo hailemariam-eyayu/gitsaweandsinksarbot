@@ -166,14 +166,82 @@ bot.onText(/\/removechannel (.+)/, async (msg, match) => {
 });
 
 bot.onText(/\/broadcast/, async (msg) => {
-  await bot.sendMessage(msg.chat.id, '🔄 ማሰራጨት ተጀምሯል...');
-  await broadcastDailyReadings();
-  await bot.sendMessage(msg.chat.id, '✅ ማሰራጨት ተጠናቅቋል!');
+  await bot.sendMessage(msg.chat.id, '📡 <b>MANUAL BROADCAST: በመላክ ላይ...</b>', { parse_mode: 'HTML' });
+  
+  try {
+    const result = await broadcastDailyReadings();
+    await bot.sendMessage(msg.chat.id, `✅ <b>MANUAL BROADCAST ተጠናቅቋል!</b>\n\n📊 የተላኩ: ${result.totalSent}\n❌ ስህተቶች: ${result.totalErrors}\n\n<i>Note: This was a manual broadcast. Scheduled broadcasts happen automatically at 6:00 AM daily.</i>`, { parse_mode: 'HTML' });
+  } catch (error) {
+    console.error('Manual broadcast error:', error);
+    await bot.sendMessage(msg.chat.id, '❌ <b>MANUAL BROADCAST ላይ ስህተት ተከስቷል!</b>', { parse_mode: 'HTML' });
+  }
 });
 
-cron.schedule('0 6 * * *', () => {
-  console.log('Running scheduled daily broadcast at 6:00 AM');
-  broadcastDailyReadings();
+cron.schedule('0 6 * * *', async () => {
+  console.log('🕕 SCHEDULED BROADCAST: Running daily broadcast at 6:00 AM Ethiopian time');
+  console.log('📡 This ONLY sends to subscribed users - other bot functions unchanged');
+  
+  try {
+    // Get today's readings first
+    const ethDate = getTodayEthiopian();
+    const readings = getDailyReadings(ethDate.month, ethDate.day);
+    
+    if (!readings.found) {
+      console.log('❌ No readings found for today, skipping scheduled broadcast');
+      return;
+    }
+    
+    // Get ONLY subscribed users (not affecting other functionality)
+    const subscribedUsers = getSubscribedUsers();
+    const channels = getChannels();
+    
+    console.log(`📡 SCHEDULED BROADCAST: Sending to ${subscribedUsers.length} subscribed users and ${channels.length} channels`);
+    
+    let successCount = 0;
+    let failCount = 0;
+    
+    // Send ONLY to subscribed users
+    for (const user of subscribedUsers) {
+      try {
+        const success = await sendDailyReadings(user.chatId);
+        if (success) {
+          successCount++;
+          console.log(`✅ SCHEDULED: Sent to user ${user.chatId} (${user.firstName || 'Unknown'})`);
+        } else {
+          failCount++;
+        }
+        // Rate limiting for scheduled broadcasts
+        await new Promise(resolve => setTimeout(resolve, 150));
+      } catch (error) {
+        failCount++;
+        console.error(`❌ SCHEDULED: Failed to send to user ${user.chatId}:`, error.message);
+      }
+    }
+    
+    // Send to channels
+    for (const channelId of channels) {
+      try {
+        const success = await sendDailyReadings(channelId);
+        if (success) {
+          successCount++;
+          console.log(`✅ SCHEDULED: Sent to channel ${channelId}`);
+        } else {
+          failCount++;
+        }
+        // Rate limiting for channels
+        await new Promise(resolve => setTimeout(resolve, 200));
+      } catch (error) {
+        failCount++;
+        console.error(`❌ SCHEDULED: Failed to send to channel ${channelId}:`, error.message);
+      }
+    }
+    
+    console.log(`✅ SCHEDULED BROADCAST COMPLETE: ${successCount} sent, ${failCount} failed`);
+    console.log(`📅 Ethiopian date: ${formatEthiopianDate(ethDate)}`);
+    
+  } catch (error) {
+    console.error('❌ SCHEDULED BROADCAST ERROR:', error);
+  }
 }, {
   timezone: 'Africa/Addis_Ababa'
 });
