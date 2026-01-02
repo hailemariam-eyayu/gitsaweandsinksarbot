@@ -1,6 +1,6 @@
 import TelegramBot from 'node-telegram-bot-api';
 import cron from 'node-cron';
-import { getTodayEthiopian, formatEthiopianDate } from './ethiopianCalendar.js';
+import { getTodayEthiopian, getYesterdayEthiopian, getTomorrowEthiopian, formatEthiopianDate } from './ethiopianCalendar.js';
 import { loadData, getDailyReadings } from './dataReader.js';
 import { 
   formatDailyMessage, 
@@ -118,30 +118,70 @@ async function broadcastDailyReadings() {
 }
 
 bot.onText(/\/start/, async (msg) => {
-  const chatId = msg.chat.id;
-  addUser(chatId, {
-    firstName: msg.from?.first_name,
-    lastName: msg.from?.last_name,
-    username: msg.from?.username
-  });
-  
-  await bot.sendMessage(chatId, formatWelcomeMessage(), { parse_mode: 'Markdown' });
+  try {
+    const chatId = msg.chat.id;
+    const userName = msg.from?.first_name || 'ተጠቃሚ';
+    
+    addUser(chatId, {
+      firstName: msg.from?.first_name,
+      lastName: msg.from?.last_name,
+      username: msg.from?.username
+    });
+    
+    console.log(`👤 New user started bot: ${userName} (${chatId})`);
+    await bot.sendMessage(chatId, formatWelcomeMessage(), { parse_mode: 'Markdown' });
+  } catch (error) {
+    console.error('Error in /start command:', error.message);
+    await bot.sendMessage(msg.chat.id, '⚠️ ስህተት ተከስቷል። እባክዎ ዳግም ይሞክሩ።');
+  }
 });
 
 bot.onText(/\/help/, async (msg) => {
-  await bot.sendMessage(msg.chat.id, formatHelpMessage(), { parse_mode: 'Markdown' });
+  try {
+    await bot.sendMessage(msg.chat.id, formatHelpMessage(), { parse_mode: 'Markdown' });
+  } catch (error) {
+    console.error('Error in /help command:', error.message);
+    await bot.sendMessage(msg.chat.id, '⚠️ ስህተት ተከስቷል። እባክዎ ዳግም ይሞክሩ።');
+  }
 });
 
 bot.onText(/\/today/, async (msg) => {
-  await sendDailyReadings(msg.chat.id);
+  try {
+    console.log(`📅 User ${msg.from?.first_name} (${msg.chat.id}) requested today's readings`);
+    const success = await sendDailyReadings(msg.chat.id);
+    if (!success) {
+      await bot.sendMessage(msg.chat.id, '⚠️ የዛሬ ንባብ ለማግኘት ችግር ተከስቷል። እባክዎ ዳግም ይሞክሩ።');
+    }
+  } catch (error) {
+    console.error('Error in /today command:', error.message);
+    await bot.sendMessage(msg.chat.id, '⚠️ ስህተት ተከስቷል። እባክዎ ዳግም ይሞክሩ።');
+  }
 });
 
 bot.onText(/\/yesterday/, async (msg) => {
-  await sendDailyReadings(msg.chat.id, 'yesterday');
+  try {
+    console.log(`📅 User ${msg.from?.first_name} (${msg.chat.id}) requested yesterday's readings`);
+    const success = await sendDailyReadings(msg.chat.id, 'yesterday');
+    if (!success) {
+      await bot.sendMessage(msg.chat.id, '⚠️ የትናንት ንባብ ለማግኘት ችግር ተከስቷል። እባክዎ ዳግም ይሞክሩ።');
+    }
+  } catch (error) {
+    console.error('Error in /yesterday command:', error.message);
+    await bot.sendMessage(msg.chat.id, '⚠️ ስህተት ተከስቷል። እባክዎ ዳግም ይሞክሩ።');
+  }
 });
 
 bot.onText(/\/tomorrow/, async (msg) => {
-  await sendDailyReadings(msg.chat.id, 'tomorrow');
+  try {
+    console.log(`📅 User ${msg.from?.first_name} (${msg.chat.id}) requested tomorrow's readings`);
+    const success = await sendDailyReadings(msg.chat.id, 'tomorrow');
+    if (!success) {
+      await bot.sendMessage(msg.chat.id, '⚠️ የነገ ንባብ ለማግኘት ችግር ተከስቷል። እባክዎ ዳግም ይሞክሩ።');
+    }
+  } catch (error) {
+    console.error('Error in /tomorrow command:', error.message);
+    await bot.sendMessage(msg.chat.id, '⚠️ ስህተት ተከስቷል። እባክዎ ዳግም ይሞክሩ።');
+  }
 });
 
 bot.onText(/\/subscribe/, async (msg) => {
@@ -271,11 +311,31 @@ cron.schedule('0 6 * * *', async () => {
 });
 
 bot.on('polling_error', (error) => {
-  console.error('Polling error:', error.message);
+  console.error('❌ Polling error:', error.message);
 });
 
-console.log('Ethiopian Orthodox Daily Readings Bot is running!');
-console.log('Waiting for messages...');
+// Enhanced startup logging
+console.log('🚀 Ethiopian Orthodox Daily Readings Bot is starting...');
+console.log('📅 Loading data files...');
+
+const dataLoaded = loadData();
+if (dataLoaded) {
+  console.log('✅ Data files loaded successfully');
+} else {
+  console.error('❌ Failed to load data files');
+}
+
+console.log('🤖 Bot is now running and waiting for messages...');
+console.log('📡 Scheduled broadcasts: Daily at 6:00 AM Ethiopian time');
 
 const ethDate = getTodayEthiopian();
-console.log(`Today's Ethiopian date: ${formatEthiopianDate(ethDate)}`);
+console.log(`📅 Today's Ethiopian date: ${formatEthiopianDate(ethDate)}`);
+
+// Test bot token
+bot.getMe().then((botInfo) => {
+  console.log(`✅ Bot connected successfully: @${botInfo.username}`);
+  console.log(`🆔 Bot ID: ${botInfo.id}`);
+}).catch((error) => {
+  console.error('❌ Failed to connect to Telegram:', error.message);
+  console.error('🔧 Please check your TELEGRAM_BOT_TOKEN');
+});

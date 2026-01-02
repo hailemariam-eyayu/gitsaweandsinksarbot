@@ -109,5 +109,7 @@ export {
   ethiopianToGregorian,
   getEthiopianMonthName,
   getTodayEthiopian,
+  getYesterdayEthiopian,
+  getTomorrowEthiopian,
   formatEthiopianDate
 };
