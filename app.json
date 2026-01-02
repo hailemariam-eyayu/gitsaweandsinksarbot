@@ -1,0 +1,23 @@
+{
+  "name": "Ethiopian Orthodox Telegram Bot",
+  "description": "Daily Ethiopian Orthodox Church readings bot",
+  "repository": "https://github.com/hailemariam-eyayu/gitsaweandsinksarbot",
+  "keywords": ["telegram", "bot", "ethiopian", "orthodox", "church"],
+  "env": {
+    "TELEGRAM_BOT_TOKEN": {
+      "description": "Your Telegram bot token from @BotFather",
+      "required": true
+    }
+  },
+  "formation": {
+    "worker": {
+      "quantity": 1,
+      "size": "eco"
+    }
+  },
+  "buildpacks": [
+    {
+      "url": "heroku/nodejs"
+    }
+  ]
+}
